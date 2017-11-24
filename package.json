@@ -1,0 +1,24 @@
+{
+    "name": "xhttp-js",
+    "version": "0.0.1",
+    "main": "./dist/index.js",
+    "typings": "./dist/index.d.js",
+    "repository": "git@github.com:honpery/xhttp.git",
+    "author": "honpery <honpery@gmail.com>",
+    "license": "MIT",
+    "scripts": {
+        "ncu": "ncu -au && yarn",
+        "test": "mocha -r ts-node/register test/**/*.ts",
+        "build": "rm -r dist; tsc --rootDir src"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.0.5",
+        "@types/mocha": "^2.2.44",
+        "chai": "^4.1.2",
+        "mocha": "^4.0.1",
+        "npm-check-updates": "^2.13.0",
+        "ts-node": "^3.3.0",
+        "tslint": "^5.8.0",
+        "typescript": "^2.6.1"
+    }
+}
