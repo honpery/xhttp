@@ -2,13 +2,16 @@
 // es6.polyfill();
 
 import 'isomorphic-fetch';
-import { Api, ApiConfig, Body, Env, Headers, Method, Methods, Params, Query, ServerConfig } from './type';
+import {
+    Api, ApiConfig, ApiGroup, Body, Headers,
+    Method, Methods, Params, Query, ServerConfig, ServerGroup,
+} from './type';
 import { Url } from './url';
 
-export interface HttpOptions {
+export interface HttpOptions<E> {
     apis: ApiConfig;
     servers: ServerConfig;
-    env: Env;
+    env: E;
 }
 
 export interface FetchOptions {
@@ -19,11 +22,11 @@ export interface FetchOptions {
     headers?: Headers;
 }
 
-export class Http {
+export class Http<E> {
 
-    private _url: Url;
+    private _url: Url<E>;
 
-    constructor(private _options: HttpOptions) {
+    constructor(private _options: HttpOptions<E>) {
         this._url = new Url({
             apis: _options.apis,
             servers: _options.servers,

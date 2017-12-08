@@ -1,16 +1,16 @@
-import { Api, ApiConfig, ApiGroup, ApiToken, Env, Params, Query, ServerConfig } from './type';
+import { Api, ApiConfig, ApiGroup, ApiToken, Params, Query, ServerConfig } from './type';
 
-export interface UrlOptions {
+export interface UrlOptions<E> {
     apis: ApiConfig;
     servers: ServerConfig;
-    env: Env;
+    env: E;
 }
 
-export class Url {
+export class Url<E> {
 
     private _config: {[token in ApiToken]: Api } = {};
 
-    constructor(private _options: UrlOptions) {
+    constructor(private _options: UrlOptions<E>) {
         this._initApiToken(_options.apis);
         this._config = this._initConfig();
     }
@@ -37,7 +37,7 @@ export class Url {
     private _initApiToken(apis: ApiConfig, token = '') {
         Object.keys(apis).forEach(name => {
             const _api = apis[name] as Api;
-            const _group = apis[name] as ApiGroup;
+            const _group = apis[name] as ApiGroup<any>;
             const _token = token ? `${token}_${name}` : name;
 
             if (_api.desc && _api.path) {
@@ -55,9 +55,9 @@ export class Url {
 
         Object.keys(servers).forEach(serverToken => {
             const server = servers[serverToken];
-            const host = server.host[env];
+            const host = server.host[env as any];
 
-            function _getApi(api: ApiGroup | Api) {
+            function _getApi(api: ApiGroup<any>) {
                 const _api = api as Api;
 
                 if (_api.desc && _api.path) {
@@ -67,7 +67,7 @@ export class Url {
                     return;
                 }
 
-                const _group = api as ApiGroup;
+                const _group = api as ApiGroup<any>;
                 Object.values(_group).forEach(_getApi);
             }
 

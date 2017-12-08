@@ -15,12 +15,6 @@ export const Methods: {[method in Method]: Method} = {
     HEAD: 'HEAD',
 };
 
-export type Env = 'ywcs' | 'uat';
-export const Envs: {[env in Env]: Env} = {
-    ywcs: 'ywcs',
-    uat: 'uat',
-};
-
 export type ApiToken = string;
 
 export interface Api {
@@ -33,23 +27,23 @@ export interface Api {
     token?: ApiToken;
 }
 
-export interface ApiGroup {
-    [group: string]: ApiGroup | Api;
-}
+export type ApiGroup<T> = {
+    [P in keyof T]: Api | ApiGroup<T>[P];
+};
 
-export type ApiConfig = ApiGroup;
+export type ApiConfig = ApiGroup<any>;
 
-export interface Server {
-    host: {
-        [env in Env]: string;
-    };
-    apis: Array<ApiGroup | Api>;
+export interface Server<T> {
+    host: { [env: string]: string; };
+    apis: Array<ApiGroup<any>>;
     params?: Params;
     query?: Query;
 }
 
 export type ServerToken = string;
 
-export type ServerConfig = {
-    [token in ServerToken]: Server;
+export type ServerGroup<T> = {
+    [token in ServerToken]: Server<T>;
 };
+
+export type ServerConfig = ServerGroup<any>;
