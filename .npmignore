@@ -1,0 +1,6 @@
+.vscode
+src
+test
+tsconfig.json
+tslint.json
+.travis.yml
