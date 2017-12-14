@@ -55,26 +55,10 @@ export class Http<E> {
 
         const res = await fetch(req);
 
-        const _result = { status: 0, message: 'success', data: {} as T | {} };
-        const result = { req, res, result: _result };
-
-        if (res.status >= 400) {
-            result.result.status = res.status;
-            result.result.message = res.statusText;
-            return result;
-        }
+        const result = { req, res, result: {} as T | {} };
 
         if (res.headers.get('Content-Type') === 'application/json') {
-            const _r: { status: number, message: string, data: T } = await res.json();
-
-            // handle business logic error.
-            if (status) {
-                result.result.status = _r.status;
-                result.result.message = _r.message;
-                return result;
-            }
-
-            result.result.data = _r.data || {};
+            result.result = await res.json();
             return result;
         }
 
