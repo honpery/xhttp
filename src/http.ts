@@ -34,15 +34,15 @@ export class Http<E> {
         });
     }
 
-    get<T>(options: FetchOptions) { return this._buildMethod<T>(Methods.GET, options); }
-    post<T>(options: FetchOptions) { return this._buildMethod<T>(Methods.POST, options); }
-    put<T>(options: FetchOptions) { return this._buildMethod<T>(Methods.PUT, options); }
-    patch<T>(options: FetchOptions) { return this._buildMethod<T>(Methods.PATCH, options); }
-    delete<T>(options: FetchOptions) { return this._buildMethod<T>(Methods.DELETE, options); }
-    options<T>(options: FetchOptions) { return this._buildMethod<T>(Methods.OPTIONS, options); }
-    head<T>(options: FetchOptions) { return this._buildMethod<T>(Methods.HEAD, options); }
+    get(options: FetchOptions) { return this._buildMethod(Methods.GET, options); }
+    post(options: FetchOptions) { return this._buildMethod(Methods.POST, options); }
+    put(options: FetchOptions) { return this._buildMethod(Methods.PUT, options); }
+    patch(options: FetchOptions) { return this._buildMethod(Methods.PATCH, options); }
+    delete(options: FetchOptions) { return this._buildMethod(Methods.DELETE, options); }
+    options(options: FetchOptions) { return this._buildMethod(Methods.OPTIONS, options); }
+    head(options: FetchOptions) { return this._buildMethod(Methods.HEAD, options); }
 
-    private async _buildMethod<T>(method: Method, options: FetchOptions) {
+    private async _buildMethod(method: Method, options: FetchOptions) {
         const { api, params, query, body, headers = {} } = options;
 
         const reqInit: RequestInit = { method, headers };
@@ -55,14 +55,6 @@ export class Http<E> {
 
         const res = await fetch(req);
 
-        const result = { req, res, result: {} as T | {} };
-
-        if (res.headers.get('Content-Type') === 'application/json') {
-            result.result = await res.json();
-            return result;
-        }
-
-        // if (res.headers.get('Content-Type') === '') { }
-        return result;
+        return { req, res };
     }
 }
