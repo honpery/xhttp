@@ -60,12 +60,13 @@ export class Url<E> {
             const host = server.host[env as any];
 
             function _getApi(api: ApiGroup<any>) {
-                const _api = Object.assign({}, api) as Api;
+                const _api = api as Api;
 
                 if (_api.desc && _api.path) {
-                    _api.token = `${serverToken}_${_api.token}`;
-                    _api.path = `${host}${_api.path}`;
-                    flat.push(_api);
+                    flat.push(Object.assign({}, _api, {
+                        token: `${serverToken}_${_api.token}`,
+                        path: `${host}${_api.path}`,
+                    }));
                     return;
                 }
 
