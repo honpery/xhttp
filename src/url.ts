@@ -53,12 +53,14 @@ export class Url<E> {
         const { apis, servers, env } = this._options;
         const flat: Api[] = [];
 
-        Object.keys(servers).forEach(serverToken => {
-            const server = servers[serverToken];
+        const _servers = Object.assign({}, servers);
+
+        Object.keys(_servers).forEach(serverToken => {
+            const server = _servers[serverToken];
             const host = server.host[env as any];
 
             function _getApi(api: ApiGroup<any>) {
-                const _api = api as Api;
+                const _api = Object.assign({}, api) as Api;
 
                 if (_api.desc && _api.path) {
                     _api.token = `${serverToken}_${_api.token}`;
