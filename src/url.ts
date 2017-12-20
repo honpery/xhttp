@@ -63,8 +63,8 @@ export class Url<E> {
                 const _api = api as Api;
 
                 if (_api.desc && _api.path) {
+                    _api.token = `${serverToken}_${_api.token}`;
                     flat.push(Object.assign({}, _api, {
-                        token: `${serverToken}_${_api.token}`,
                         path: `${host}${_api.path}`,
                     }));
                     return;
