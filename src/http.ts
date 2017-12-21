@@ -13,6 +13,7 @@ export interface HttpOptions<E> {
     servers: ServerConfig;
     env: E;
     headers?: Headers;
+    query?: Query;
 }
 
 export interface FetchOptions {
@@ -45,13 +46,13 @@ export class Http<E> {
 
     private async _buildMethod(method: Method, options: FetchOptions) {
         const { api, params, query, body, headers: fetchHeader = {} } = options;
-        const { headers: globalHeader = {} } = this._options;
+        const { headers: globalHeader = {}, query: globalQuery = {} } = this._options;
 
         const reqInit: RequestInit = { method, headers: Object.assign({}, globalHeader, fetchHeader) };
 
         if ([Methods.POST, Methods.PATCH, Methods.PUT].includes(method)) reqInit.body = body;
 
-        const url = this._url.create(api, params, query);
+        const url = this._url.create(api, params, Object.assign({}, query, globalQuery));
 
         const req = new Request(url, reqInit);
 
