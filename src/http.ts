@@ -12,6 +12,7 @@ export interface HttpOptions<E> {
     apis: ApiConfig;
     servers: ServerConfig;
     env: E;
+    headers?: Headers;
 }
 
 export interface FetchOptions {
@@ -43,9 +44,10 @@ export class Http<E> {
     head(options: FetchOptions) { return this._buildMethod(Methods.HEAD, options); }
 
     private async _buildMethod(method: Method, options: FetchOptions) {
-        const { api, params, query, body, headers = {} } = options;
+        const { api, params, query, body, headers: fetchHeader = {} } = options;
+        const { headers: globalHeader = {} } = this._options;
 
-        const reqInit: RequestInit = { method, headers };
+        const reqInit: RequestInit = { method, headers: Object.assign({}, globalHeader, fetchHeader) };
 
         if ([Methods.POST, Methods.PATCH, Methods.PUT].includes(method)) reqInit.body = body;
 
