@@ -1,30 +1,39 @@
 import { initApis, initServers } from '../src';
 
 export const APIs = initApis({
-    demo: {
-        test: {
-            demo: {
-                desc: 'adasdsa',
-                path: '/demo/test/:name/demo',
+    rest: {
+        market: {
+            kline: {
+                path: '/market/history/kline',
+                desc: '获取K线数据',
             },
         },
     },
 });
 
 export const SERVERs = initServers({
-    ddd: {
+    rest: {
         host: {
-            dev: 'dev.com',
-            test: 'test.com',
+            prod: 'https://api.huobi.pro',
         },
-        apis: [APIs.demo],
+        desc: 'RESTful api',
+        apis: [APIs.rest],
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',        // tslint:disable
+            'Content-Type': 'application/json',
+        },
     },
 });
 
 export const APIsResult = {
-    ddd_demo_test_demo: {
-        desc: 'adasdsa',
-        path: 'test.com/demo/test/:name/demo',
-        token: 'ddd_demo_test_demo',
+    rest_rest_market_kline: {
+        desc: '获取K线数据',
+        path: 'https://api.huobi.pro/market/history/kline',
+        token: 'rest_rest_market_kline',
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',        // tslint:disable
+            'Content-Type': 'application/json',
+        },
+        query: {},
     },
 };

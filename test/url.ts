@@ -5,7 +5,7 @@ import { APIs, APIsResult, SERVERs } from './_data';
 const url = new Url({
     apis: APIs,
     servers: SERVERs,
-    env: 'test',
+    env: 'prod',
 });
 
 describe('sdk - common - url.ts', () => {
@@ -15,8 +15,8 @@ describe('sdk - common - url.ts', () => {
     });
 
     it('create url.', () => {
-        const _path = url.create(APIs.demo.test.demo, ['202002'], { show: false, name: 111 });
-        const result = 'test.com/demo/test/202002/demo?show=false&name=111';
+        const _path = url.create(APIs.rest.market.kline, ['202002'], { show: false, name: 111 });
+        const result = 'https://api.huobi.pro/market/history/kline/202002?show=false&name=111';
         expect(_path).to.be.equals(result);
     });
 });

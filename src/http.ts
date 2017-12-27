@@ -1,7 +1,9 @@
 // import * as es6 from 'es6-promise';
 // es6.polyfill();
 
+import color from 'chalk';
 import 'isomorphic-fetch';
+import { Logger } from './logger';
 import {
     Api, ApiConfig, ApiGroup, Body, Headers,
     Method, Methods, Params, Query, ServerConfig, ServerGroup,
@@ -14,6 +16,7 @@ export interface HttpOptions<E> {
     env: E;
     headers?: Headers;
     query?: Query;
+    debug?: boolean;
 }
 
 export interface FetchOptions {
@@ -27,12 +30,17 @@ export interface FetchOptions {
 export class Http<E> {
 
     private _url: Url<E>;
+    private _logger: Logger;
 
     constructor(private _options: HttpOptions<E>) {
         this._url = new Url({
             apis: _options.apis,
             servers: _options.servers,
             env: _options.env,
+        });
+
+        this._logger = new Logger({
+            debug: _options.debug,
         });
     }
 
@@ -56,8 +64,13 @@ export class Http<E> {
 
         const req = new Request(url, reqInit);
 
+        const start = Date.now();
+        console.log(this._logger.reqLog(req));
+
         const res = await fetch(req);
+        console.log(this._logger.resLog(req, res, Date.now() - start));
 
         return { req, res };
     }
+
 }

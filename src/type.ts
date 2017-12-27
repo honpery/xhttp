@@ -38,6 +38,7 @@ export interface Server<T> {
     apis: Array<ApiGroup<any>>;
     params?: Params;
     query?: Query;
+    headers?: Headers;
 }
 
 export type ServerToken = string;

@@ -26,7 +26,10 @@ export class Url<E> {
         if (params.length) result += `/${params.join('/')}`;
 
         // handle query
-        result += '?' + Object.keys(query).map(k => `${k}=${query[k]}`).join('&');
+        if (Object.keys(query).length) {
+            result += '?' + Object.keys(query).map(k => `${k}=${query[k]}`).join('&');
+        }
+
         return result;
     }
 
@@ -56,7 +59,7 @@ export class Url<E> {
         const _servers = Object.assign({}, servers);
 
         Object.keys(_servers).forEach(serverToken => {
-            const server = _servers[serverToken];
+            const server = _servers[serverToken] || {};
             const host = server.host[env as any];
 
             function _getApi(api: ApiGroup<any>) {
@@ -64,6 +67,8 @@ export class Url<E> {
 
                 if (_api.desc && _api.path) {
                     _api.token = `${serverToken}_${_api.token}`;
+                    _api.query = Object.assign({}, server.query, _api.query);
+                    _api.headers = Object.assign({}, server.headers, _api.headers);
                     flat.push(Object.assign({}, _api, {
                         path: `${host}${_api.path}`,
                     }));
