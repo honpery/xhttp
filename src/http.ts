@@ -65,10 +65,10 @@ export class Http<E> {
         const req = new Request(url, reqInit);
 
         const start = Date.now();
-        console.log(this._logger.reqLog(req));
+        this._logger.reqLog(req);
 
         const res = await fetch(req);
-        console.log(this._logger.resLog(req, res, Date.now() - start));
+        this._logger.resLog(req, res, Date.now() - start);
 
         return { req, res };
     }

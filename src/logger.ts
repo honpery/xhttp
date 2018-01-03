@@ -18,7 +18,7 @@ export class Logger {
             text += this._fmtHeader(req.headers);
         }
 
-        return text;
+        console.log(text);
     }
 
     resLog(req: Request, res: Response, time: number) {
@@ -33,7 +33,7 @@ export class Logger {
             text += this._fmtHeader(res.headers);
         }
 
-        return text;
+        console.log(text);
     }
 
     private _fmtHeader(headers: Headers) {
