@@ -1,76 +1,59 @@
-// import * as es6 from 'es6-promise';
-// es6.polyfill();
-
-import color from 'chalk';
 import 'isomorphic-fetch';
 import { Logger } from './logger';
-import {
-    Api, ApiConfig, ApiGroup, Body, Headers,
-    Method, Methods, Params, Query, ServerConfig, ServerGroup,
-} from './type';
+import { Api, Body, Headers, Host, LogLevel, Method, Params, Query } from './type';
 import { Url } from './url';
 
-export interface HttpOptions<E> {
-    apis: ApiConfig;
-    servers: ServerConfig;
-    env: E;
-    headers?: Headers;
-    query?: Query;
-    debug?: boolean;
+export interface HttpOptions {
+	host: Host;
+	logLevel?: LogLevel;
+	query?: Query;
+	headers?: Headers;
 }
 
 export interface FetchOptions {
-    api: Api;
-    params?: Params;
-    query?: Query;
-    body?: Body;
-    headers?: Headers;
+	api: Api;
+	params: Params;
+	query?: Query;
+	body?: Body;
+	headers?: Headers;
 }
 
 export class Http<E> {
 
-    private _url: Url<E>;
-    private _logger: Logger;
+	private _url: Url;
+	private _logger: Logger;
 
-    constructor(private _options: HttpOptions<E>) {
-        this._url = new Url({
-            apis: _options.apis,
-            servers: _options.servers,
-            env: _options.env,
-        });
+	constructor(private _options: HttpOptions) {
+		this._url = new Url({ host: _options.host });
+		this._logger = new Logger({ logLevel: _options.logLevel });
+	}
 
-        this._logger = new Logger({
-            debug: _options.debug,
-        });
-    }
+	get(options: FetchOptions) { return this._buildMethod(Method.GET, options); }
+	post(options: FetchOptions) { return this._buildMethod(Method.POST, options); }
+	put(options: FetchOptions) { return this._buildMethod(Method.PUT, options); }
+	patch(options: FetchOptions) { return this._buildMethod(Method.PATCH, options); }
+	delete(options: FetchOptions) { return this._buildMethod(Method.DELETE, options); }
 
-    get(options: FetchOptions) { return this._buildMethod(Methods.GET, options); }
-    post(options: FetchOptions) { return this._buildMethod(Methods.POST, options); }
-    put(options: FetchOptions) { return this._buildMethod(Methods.PUT, options); }
-    patch(options: FetchOptions) { return this._buildMethod(Methods.PATCH, options); }
-    delete(options: FetchOptions) { return this._buildMethod(Methods.DELETE, options); }
-    options(options: FetchOptions) { return this._buildMethod(Methods.OPTIONS, options); }
-    head(options: FetchOptions) { return this._buildMethod(Methods.HEAD, options); }
+	private async _buildMethod(method: Method, options: FetchOptions) {
+		const { api, params, body } = options;
+		const query = { ...this._options.query, ...options.query };
+		const headers = { ...this._options.headers, ...options.headers };
 
-    private async _buildMethod(method: Method, options: FetchOptions) {
-        const { api, params, query, body, headers: fetchHeader = {} } = options;
-        const { headers: globalHeader = {}, query: globalQuery = {} } = this._options;
+		const reqInit: RequestInit = { method, headers };
 
-        const reqInit: RequestInit = { method, headers: Object.assign({}, globalHeader, fetchHeader) };
+		if ([Method.POST, Method.PATCH, Method.PUT].includes(method)) reqInit.body = body;
 
-        if ([Methods.POST, Methods.PATCH, Methods.PUT].includes(method)) reqInit.body = body;
+		const url = this._url.create(api, params, query);
 
-        const url = this._url.create(api, params, Object.assign({}, query, globalQuery));
+		const req = new Request(url, reqInit);
 
-        const req = new Request(url, reqInit);
+		this._logger.reqLog(req);
 
-        const start = Date.now();
-        this._logger.reqLog(req);
+		const res = await fetch(req);
 
-        const res = await fetch(req);
-        this._logger.resLog(req, res, Date.now() - start);
+		this._logger.resLog(req, res);
 
-        return { req, res };
-    }
+		return { req, res };
+	}
 
 }

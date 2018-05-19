@@ -1,50 +1,63 @@
+// tslint:disable:no-console
 import color from 'chalk';
+import { LogLevel } from './type';
 
 export interface LoggerOptions {
-    debug?: boolean;
+	logLevel?: LogLevel;
 }
 
 export class Logger {
-    constructor(private _options: LoggerOptions) { }
+	private _start = 0;
+	constructor(private _options: LoggerOptions) { }
 
-    reqLog(req: Request) {
-        let text = '';
+	reqLog(req: Request) {
+		const { logLevel } = this._options;
+		if (logLevel === LogLevel.none) return;
 
-        text += color.gray('<--') + ' ';
-        text += color.green(req.method.toUpperCase()) + ' ';
-        text += color.white(req.url);
+		this._start = Date.now();
 
-        if (this._options.debug) {
-            text += this._fmtHeader(req.headers);
-        }
+		let text = '';
 
-        console.log(text);
-    }
+		text += color.gray('<--') + ' ';
+		text += color.green(req.method.toUpperCase()) + ' ';
+		text += color.white(req.url);
 
-    resLog(req: Request, res: Response, time: number) {
-        let text = '';
+		if (logLevel === LogLevel.full) {
+			text += this._fmtHeader(req.headers);
+		}
 
-        text += color.gray('-->') + ' ';
-        text += color.green(req.method.toUpperCase()) + ' ';
-        text += color.white(req.url) + ' ';
-        text += color.yellow(`${time}ms`);
+		console.log(text);
+	}
 
-        if (this._options.debug) {
-            text += this._fmtHeader(res.headers);
-        }
+	resLog(req: Request, res: Response) {
+		const { logLevel } = this._options;
+		if (logLevel === LogLevel.none) return;
 
-        console.log(text);
-    }
+		const time = Date.now() - this._start;
 
-    private _fmtHeader(headers: Headers) {
-        let result = '\n    Headers: \n';
-        headers.forEach((value, key) => {
-            result += `\t${key}: ${Array.isArray(value) ? value.join(', ') : value} \n`;
-        });
-        return result;
-    }
+		let text = '';
 
-    private _fmtBody() {
+		text += color.gray('-->') + ' ';
+		text += color.green(req.method.toUpperCase()) + ' ';
+		text += color.white(req.url) + ' ';
+		text += color.yellow(`${time}ms`);
 
-    }
+		if (logLevel === LogLevel.full) {
+			text += this._fmtHeader(res.headers);
+		}
+
+		console.log(text);
+	}
+
+	private _fmtHeader(headers: Headers) {
+		let result = '\n    Headers: \n';
+		headers.forEach((value: string, key: any) => {
+			result += `\t${key}: ${Array.isArray(value) ? value.join(', ') : value} \n`;
+		});
+		return result;
+	}
+
+	private _fmtBody() {
+		return;
+	}
 }

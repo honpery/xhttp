@@ -1,50 +1,33 @@
-export type Params = any[];
-export type Query = any;
+// basic
+export type Scalar = string | number | boolean;
 
-export type Headers = any;
+// http
+export type Api = string;
+
+export type Host = string;
+
+export type Params = Scalar[];
+
+export interface Query {
+	[key: string]: Scalar | Scalar[];
+}
+
 export type Body = any;
 
-export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
-export const Methods: {[method in Method]: Method} = {
-    GET: 'GET',
-    POST: 'POST',
-    PUT: 'PUT',
-    PATCH: 'PATCH',
-    DELETE: 'DELETE',
-    OPTIONS: 'OPTIONS',
-    HEAD: 'HEAD',
-};
-
-export type ApiToken = string;
-
-export interface Api {
-    path: string;
-    desc: string;
-    params?: Params;
-    query?: Query;
-    headers?: Headers;
-    body?: Body;
-    token?: ApiToken;
+export interface Headers {
+	[key: string]: Scalar | Scalar[];
 }
 
-export type ApiGroup<T> = {
-    [P in keyof T]: Api | ApiGroup<T>[P];
-};
-
-export type ApiConfig = ApiGroup<any>;
-
-export interface Server<T> {
-    host: { [env: string]: string; };
-    apis: Array<ApiGroup<any>>;
-    params?: Params;
-    query?: Query;
-    headers?: Headers;
+export enum Method {
+	GET = 'GET',
+	POST = 'POST',
+	PUT = 'PUT',
+	PATCH = 'PATCH',
+	DELETE = 'DELETE',
 }
 
-export type ServerToken = string;
-
-export type ServerGroup<T> = {
-    [token in ServerToken]: Server<T>;
-};
-
-export type ServerConfig = ServerGroup<any>;
+export enum LogLevel {
+	none = 'none',
+	simple = 'simple',
+	full = 'full',
+}

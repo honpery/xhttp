@@ -1,6 +1,6 @@
 {
     "name": "xhttp-js",
-    "version": "0.0.11",
+    "version": "2.0.0",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.js",
     "repository": "git@github.com:honpery/xhttp.git",
@@ -13,21 +13,22 @@
         "build": "rm -r dist; tsc --rootDir src"
     },
     "devDependencies": {
-        "@types/chai": "^4.0.8",
+        "@types/chai": "^4.1.3",
         "@types/chalk": "^2.2.0",
-        "@types/es6-promise": "^0.0.33",
+        "@types/es6-promise": "^3.3.0",
         "@types/isomorphic-fetch": "^0.0.34",
-        "@types/mocha": "^2.2.44",
+        "@types/mocha": "^5.2.0",
         "chai": "^4.1.2",
-        "mocha": "^4.0.1",
-        "npm-check-updates": "^2.13.0",
-        "ts-node": "^3.3.0",
-        "tslint": "^5.8.0",
-        "typescript": "^2.6.2"
+        "mocha": "^5.2.0",
+        "npm-check-updates": "^2.14.2",
+        "ts-node": "^6.0.3",
+        "tslint": "^5.10.0",
+        "tslint-zzz": "^1.0.1",
+        "typescript": "^2.8.3"
     },
     "dependencies": {
-        "chalk": "^2.3.0",
-        "es6-promise": "^4.1.1",
+        "chalk": "^2.4.1",
+        "es6-promise": "^4.2.4",
         "isomorphic-fetch": "^2.2.1"
     }
 }

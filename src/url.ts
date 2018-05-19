@@ -1,87 +1,37 @@
-import { Api, ApiConfig, ApiGroup, ApiToken, Params, Query, ServerConfig } from './type';
+import { Api, Host, Params, Query } from './type';
 
-export interface UrlOptions<E> {
-    apis: ApiConfig;
-    servers: ServerConfig;
-    env: E;
+export interface UrlOptions {
+	host: Host;
 }
 
-export class Url<E> {
+export class Url {
+	constructor(private _options: UrlOptions) { }
 
-    private _config: {[token in ApiToken]: Api } = {};
+	create(api: Api, params: Params = [], query: Query = {}) {
+		const { host } = this._options;
 
-    constructor(private _options: UrlOptions<E>) {
-        this._initApiToken(_options.apis);
-        this._config = this._initConfig();
-    }
+		let result = '';
 
-    create(api: Api, params: Params = [], query: Query = {}) {
-        let result = this._config[api.token || ''].path;
+		// host handler
+		result += host.replace(/\/$/g, str => '');
 
-        // handle params
-        result = result.replace(/\/:[a-zA-Z0-9_]+/g, str => {
-            if (!params.length) throw new Error(`API: ${api.token} params length error.`);
-            return '/' + params.shift();
-        });
-        if (params.length) result += `/${params.join('/')}`;
+		// api handler
+		result += api.startsWith('/') ? api : `/${api}`;
 
-        // handle query
-        if (Object.keys(query).length) {
-            result += '?' + Object.keys(query).map(k => `${k}=${query[k]}`).join('&');
-        }
+		// params handler
+		const _params = params.map(i => i);
+		result += result.replace(/\/:[a-zA-Z0-9_]\//g, str => {
+			if (!_params.length) throw new Error(`API: ${api} params length error.`);
+			return `/${params.shift()}/`;
+		});
+		if (_params.length) result += `/${params.join('/')}`;
 
-        return result;
-    }
+		// query handler
+		result = result.replace(/\?$/g, str => '');
+		result += '?' + Object.keys(query).map(k => `${k}=${query[k]}`);
+		result = result.replace(/\?$/g, str => '');
 
-    getConfig() {
-        return this._config;
-    }
+		return result;
 
-    private _initApiToken(apis: ApiConfig, token = '') {
-        Object.keys(apis).forEach(name => {
-            const _api = apis[name] as Api;
-            const _group = apis[name] as ApiGroup<any>;
-            const _token = token ? `${token}_${name}` : name;
-
-            if (_api.desc && _api.path) {
-                _api.token = _token;
-                return;
-            }
-
-            this._initApiToken(_group, _token);
-        });
-    }
-
-    private _initConfig() {
-        const { apis, servers, env } = this._options;
-        const flat: Api[] = [];
-
-        const _servers = Object.assign({}, servers);
-
-        Object.keys(_servers).forEach(serverToken => {
-            const server = _servers[serverToken] || {};
-            const host = server.host[env as any];
-
-            function _getApi(api: ApiGroup<any>) {
-                const _api = api as Api;
-
-                if (_api.desc && _api.path) {
-                    _api.token = `${serverToken}_${_api.token}`;
-                    _api.query = Object.assign({}, server.query, _api.query);
-                    _api.headers = Object.assign({}, server.headers, _api.headers);
-                    flat.push(Object.assign({}, _api, {
-                        path: `${host}${_api.path}`,
-                    }));
-                    return;
-                }
-
-                const _group = api as ApiGroup<any>;
-                Object.values(_group).forEach(_getApi);
-            }
-
-            server.apis.forEach(_getApi);
-        });
-
-        return Object.assign(this._config, ...flat.map(api => ({ [api.token || '']: api })));
-    }
+	}
 }
