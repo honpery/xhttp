@@ -12,7 +12,7 @@ export interface HttpOptions {
 
 export interface FetchOptions {
 	api: Api;
-	params: Params;
+	params?: Params;
 	query?: Query;
 	body?: Body;
 	headers?: Headers;

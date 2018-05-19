@@ -1,6 +1,6 @@
 {
     "name": "xhttp-js",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "main": "./dist/index.js",
     "typings": "./dist/index.d.js",
     "repository": "git@github.com:honpery/xhttp.git",
@@ -10,7 +10,8 @@
         "ncu": "ncu -au && yarn",
         "test": "mocha -r ts-node/register test/**/*.ts",
         "test:w": "mocha -r ts-node/register --watch-extensions ts --watch test/**/*.ts",
-        "build": "rm -r dist; tsc --rootDir src"
+        "build": "rm -r dist && tsc --rootDir src",
+        "pub": "yarn run build && npm publish"
     },
     "devDependencies": {
         "@types/chai": "^4.1.3",
