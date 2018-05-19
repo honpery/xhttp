@@ -20,7 +20,7 @@ export class Url {
 
 		// params handler
 		const _params = params.map(i => i);
-		result += result.replace(/\/:[a-zA-Z0-9_]\//g, str => {
+		result = result.replace(/\/:[a-zA-Z0-9_]\//g, str => {
 			if (!_params.length) throw new Error(`API: ${api} params length error.`);
 			return `/${params.shift()}/`;
 		});
@@ -28,7 +28,7 @@ export class Url {
 
 		// query handler
 		result = result.replace(/\?$/g, str => '');
-		result += '?' + Object.keys(query).map(k => `${k}=${query[k]}`);
+		result += '?' + Object.keys(query).map(k => `${k}=${query[k]}`).join('&');
 		result = result.replace(/\?$/g, str => '');
 
 		return result;
