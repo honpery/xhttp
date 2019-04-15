@@ -21,7 +21,7 @@
         "@types/mocha": "^5.2.0",
         "chai": "^4.1.2",
         "mocha": "^5.2.0",
-        "npm-check-updates": "^2.14.2",
+        "npm-check-updates": "^3.1.8",
         "ts-node": "^6.0.3",
         "tslint": "^5.10.0",
         "tslint-zzz": "^1.0.1",
